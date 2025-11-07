@@ -1,6 +1,6 @@
-import { BaseEntity } from '../common';
-import { Tables } from '../database';
-import { ProductStatus } from '../enums';
+import type { BaseEntity } from '../common';
+import type { Tables } from '../database';
+import type { ProductStatus } from '../enums';
 
 // Base Supabase product type
 export type ProductRow = Tables<'products'>;

@@ -1,16 +1,10 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
   // Configuration des images
   images: {
     domains: [
-      'llsifflkfjogjagmbmpi.supabase.co',
-      'images.unsplash.com',
+      process.env.NEXT_PUBLIC_SUPABASE_IMAGE_DOMAIN || 'images.unsplash.com',
       'via.placeholder.com',
     ],
     formats: ['image/webp', 'image/avif'],

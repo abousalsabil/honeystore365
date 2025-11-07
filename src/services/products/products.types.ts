@@ -1,7 +1,7 @@
 // Products service specific types
-import { Category, CreateProductData, Product, UpdateProductData } from '@/types/business';
-import { PaginatedResult, ServiceResult } from '@/types/common';
-import { BaseService, CacheableService, ProductSearchFilters, SearchableService } from '@/types/services';
+import type { Category, CreateProductData, Product, UpdateProductData } from '@/types/business';
+import type { PaginatedResult, ServiceResult } from '@/types/common';
+import type { BaseService, CacheableService, ProductSearchFilters, SearchableService } from '@/types/services';
 
 export interface ProductService
   extends BaseService<Product, CreateProductData, UpdateProductData, ProductSearchFilters>,

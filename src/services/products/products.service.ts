@@ -1,16 +1,16 @@
 import { BusinessError, ValidationError } from '@/lib/errors/custom-errors';
 import { logger } from '@/lib/logger';
 import { createClientServer } from '@/lib/supabase/server';
-import { Category, CreateProductData, Product, ProductFilters, ProductSearchParams, UpdateProductData } from '@/types/business';
-import { PaginatedResult, ServiceResult } from '@/types/common';
+import type { Category, CreateProductData, Product, ProductFilters, ProductSearchParams, UpdateProductData } from '@/types/business';
+import type { PaginatedResult, ServiceResult } from '@/types/common';
 import { ProductStatus } from '@/types/enums';
-import { Tables } from '@/types/supabase';
-import { CategoryService, ProductService } from './products.types';
+import type { Tables } from '@/types/supabase';
+import type { CategoryService, ProductService } from './products.types';
 
 type ProductRow = Tables<'products'>;
 type CategoryRow = Tables<'categories'>;
-type ProductImageRow = Tables<'product_images'>;
-type ReviewRow = Tables<'reviews'>;
+// type ProductImageRow = Tables<'product_images'>;
+// type ReviewRow = Tables<'reviews'>;
 
 export class ProductServiceImpl implements ProductService {
   private cache = new Map<string, { data: any; timestamp: number }>();
@@ -36,8 +36,16 @@ export class ProductServiceImpl implements ProductService {
   private mapProductRow(
     row: ProductRow,
     categories: Category[] = [],
-    images: any[] = [],
-    reviews: any[] = []
+    images: {
+      id: string;
+      product_id: string;
+      image_url: string;
+      alt_text: string | null;
+      is_primary: boolean | null;
+      sort_order: number | null;
+      created_at: string;
+    }[],
+    reviews: { rating: number }[] = []
   ): Product {
     const averageRating =
       reviews.length > 0 ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : undefined;
@@ -45,10 +53,10 @@ export class ProductServiceImpl implements ProductService {
     return {
       id: row.id,
       name: row.name,
-      description: row.description || undefined,
+      description: row.description ?? undefined,
       price: row.price,
       stock: row.stock,
-      imageUrl: row.image_url || undefined,
+      imageUrl: row.image_url ?? undefined,
       status: ProductStatus.ACTIVE, // Default status since it's not in the current schema
       categories,
       images: images.map(img => ({
@@ -56,8 +64,8 @@ export class ProductServiceImpl implements ProductService {
         productId: img.product_id,
         imageUrl: img.image_url,
         altText: img.alt_text,
-        isPrimary: img.is_primary || false,
-        sortOrder: img.sort_order || 0,
+        isPrimary: img.is_primary ?? false,
+        sortOrder: img.sort_order ?? 0,
         createdAt: new Date(img.created_at),
         updatedAt: new Date(img.created_at),
       })),
@@ -124,13 +132,13 @@ export class ProductServiceImpl implements ProductService {
       }
 
       // Apply sorting
-      const sortBy = filters?.sortBy || 'created_at';
-      const sortOrder = filters?.sortOrder || 'desc';
+      const sortBy = filters?.sortBy ?? 'created_at';
+      const sortOrder = filters?.sortOrder ?? 'desc';
       query = query.order(sortBy, { ascending: sortOrder === 'asc' });
 
       // Apply pagination
-      const page = filters?.page || 1;
-      const limit = filters?.limit || 10;
+      const page = filters?.page ?? 1;
+      const limit = filters?.limit ?? 10;
       const offset = (page - 1) * limit;
       query = query.range(offset, offset + limit - 1);
 
@@ -146,11 +154,12 @@ export class ProductServiceImpl implements ProductService {
 
       const products =
         data?.map(row => {
-          const categories = row.product_categories?.map((pc: any) => this.mapCategoryRow(pc.categories)) || [];
+          const categories =
+            row.product_categories?.map((pc: { categories: CategoryRow }) => this.mapCategoryRow(pc.categories)) ?? [];
           return this.mapProductRow(row, categories, row.product_images, row.reviews);
-        }) || [];
+        }) ?? [];
 
-      const total = count || products.length;
+      const total = count ?? products.length;
       const totalPages = Math.ceil(total / limit);
 
       const result: PaginatedResult<Product> = {
@@ -186,7 +195,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -196,7 +204,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while fetching products',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -251,7 +258,8 @@ export class ProductServiceImpl implements ProductService {
         throw new BusinessError('Failed to fetch product', 'PRODUCT_FETCH_ERROR');
       }
 
-      const categories = data.product_categories?.map((pc: any) => this.mapCategoryRow(pc.categories)) || [];
+      const categories =
+        data.product_categories?.map((pc: { categories: CategoryRow }) => this.mapCategoryRow(pc.categories)) || [];
 
       const product = this.mapProductRow(data, categories, data.product_images, data.reviews);
 
@@ -277,7 +285,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -287,7 +294,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while fetching the product',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -383,7 +389,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -393,7 +398,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while searching products',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -494,7 +498,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -504,7 +507,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while fetching products by category',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -579,7 +581,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -589,7 +590,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while fetching featured products',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -683,7 +683,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -693,7 +692,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while fetching related products',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -784,7 +782,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -794,7 +791,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while creating the product',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -809,15 +805,12 @@ export class ProductServiceImpl implements ProductService {
       }
 
       // Validation
-      if (data.name !== undefined && data.name.trim().length === 0) {
+      if (data.name !== undefined && data.name.trim().length === 0)
         throw new ValidationError('Product name cannot be empty', 'name', 'INVALID');
-      }
-      if (data.price !== undefined && data.price <= 0) {
+      if (data.price !== undefined && data.price <= 0)
         throw new ValidationError('Product price must be greater than 0', 'price', 'INVALID');
-      }
-      if (data.stock !== undefined && data.stock < 0) {
+      if (data.stock !== undefined && data.stock < 0)
         throw new ValidationError('Product stock cannot be negative', 'stock', 'INVALID');
-      }
 
       const supabase = await createClientServer('service_role');
 
@@ -891,7 +884,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -901,7 +893,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while updating the product',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }
@@ -956,7 +947,6 @@ export class ProductServiceImpl implements ProductService {
           error: {
             message: error.message,
             code: error.code,
-
           },
         };
       }
@@ -966,7 +956,6 @@ export class ProductServiceImpl implements ProductService {
         error: {
           message: 'An unexpected error occurred while deleting the product',
           code: 'UNKNOWN_ERROR',
-
         },
       };
     }

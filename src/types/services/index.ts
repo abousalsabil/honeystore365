@@ -1,6 +1,6 @@
 // Service-specific types and interfaces
 
-import { FilterParams, PaginatedResult, ServiceResult } from '../common';
+import type { FilterParams, PaginatedResult, ServiceResult } from '../common';
 
 // Re-export filter types
 export * from './filters';

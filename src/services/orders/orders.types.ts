@@ -1,5 +1,5 @@
 // Orders service specific types
-import {
+import type {
   CheckoutData,
   CheckoutResult,
   CreateOrderData,
@@ -7,8 +7,8 @@ import {
   OrderStats,
   UpdateOrderStatusData,
 } from '@/types/business';
-import { PaginatedResult, ServiceResult } from '@/types/common';
-import { CacheableService, OrderSearchFilters } from '@/types/services';
+import type { PaginatedResult, ServiceResult } from '@/types/common';
+import type { CacheableService, OrderSearchFilters } from '@/types/services';
 
 export interface OrderService extends CacheableService {
   createOrder(data: CreateOrderData): Promise<ServiceResult<Order>>;

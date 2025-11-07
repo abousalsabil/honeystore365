@@ -1,6 +1,6 @@
-import { BaseEntity } from '../common';
-import { Tables } from '../database';
-import { UserRole } from '../enums';
+import type { BaseEntity } from '../common';
+import type { Tables } from '../database';
+import type { UserRole } from '../enums';
 
 // Base Supabase types
 export type CustomerRow = Tables<'customers'>;
