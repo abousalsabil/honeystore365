@@ -1,7 +1,7 @@
-import { BaseEntity } from '../common';
-import { Tables } from '../database';
-import { CartStatus } from '../enums';
-import { Product } from './product';
+import type { BaseEntity } from '../common';
+import type { Tables } from '../database';
+import type { CartStatus } from '../enums';
+import type { Product } from './product';
 
 // Base Supabase types
 export type CartRow = Tables<'carts'>;

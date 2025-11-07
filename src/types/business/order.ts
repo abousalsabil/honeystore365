@@ -1,8 +1,8 @@
-import { BaseEntity } from '../common';
-import { Tables } from '../database';
-import { OrderStatus, PaymentMethod, PaymentStatus } from '../enums';
-import { Product } from './product';
-import { Address, User } from './user';
+import type { BaseEntity } from '../common';
+import type { Tables } from '../database';
+import type { OrderStatus, PaymentMethod, PaymentStatus } from '../enums';
+import type { Product } from './product';
+import type { Address, User } from './user';
 
 // Base Supabase types
 export type OrderRow = Tables<'orders'>;

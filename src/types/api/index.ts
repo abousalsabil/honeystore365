@@ -1,6 +1,6 @@
 // API-specific types and interfaces
 
-import { PaginatedResult, ServiceResult } from '../common';
+import type { PaginatedResult, ServiceResult } from '../common';
 
 // Generic API response types
 export interface APIResponse<T = any> {

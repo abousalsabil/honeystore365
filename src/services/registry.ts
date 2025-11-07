@@ -1,10 +1,10 @@
 // Service registry and factory for dependency injection
 
-import { ServiceConfig, ServiceHealth } from '@/types/services';
-import { AuthService } from './auth/auth.types';
-import { CartService } from './cart/cart.types';
-import { CheckoutService, OrderService } from './orders/orders.types';
-import { CategoryService, ProductService } from './products/products.types';
+import type { ServiceConfig, ServiceHealth } from '@/types/services';
+import type { AuthService } from './auth/auth.types';
+import type { CartService } from './cart/cart.types';
+import type { CheckoutService, OrderService } from './orders/orders.types';
+import type { CategoryService, ProductService } from './products/products.types';
 
 // Service registry interface
 export interface ServiceRegistry {
@@ -51,7 +51,9 @@ export class ServiceContainer implements ServiceManager {
   private initialized = false;
 
   async initialize(): Promise<void> {
-    if (this.initialized) return;
+    if (this.initialized) {
+      return;
+    }
 
     // Initialize services in dependency order
     // TODO: Implement actual service initialization in task 4

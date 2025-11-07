@@ -1,7 +1,7 @@
 // Service filter and search parameter types
 
-import { FilterParams, PaginationParams } from '../common';
-import { OrderStatus, PaymentMethod, ProductStatus, UserRole } from '../enums';
+import type { FilterParams, PaginationParams } from '../common';
+import type { OrderStatus, PaymentMethod, ProductStatus, UserRole } from '../enums';
 
 // Base filter interfaces
 export interface DateRangeFilter {
